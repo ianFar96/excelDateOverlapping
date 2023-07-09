@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Backend } from '../services/backend';
+import { FileConflict } from '../../types/window';
+
 const backend = new Backend();
 
 const path = ref(localStorage.getItem('path') || '');
@@ -8,7 +10,7 @@ const date = ref(localStorage.getItem('date') || '');
 const startTime = ref(localStorage.getItem('startTime') || '');
 const endTime = ref(localStorage.getItem('endTime') || '');
 
-const sheets = ref<string[]>([]);
+const sheets = ref<FileConflict[]>([]);
 const scan = async () => {
 	try {
 		if (!path.value) {
@@ -55,4 +57,28 @@ const scan = async () => {
 	</div>
 
 	<button type="button" @click="scan">Scan</button>
+
+	<div v-if="sheets.length > 0">
+		<ul>
+			<li v-for="sheet in sheets" :key="sheet.First">
+				<h2>{{ sheet.First }}</h2>
+					<table>
+						<tr>
+							<th v-for="col in sheet.Second" :key="col">
+								{{ col }}
+							</th>
+						</tr>
+						<template v-for="conflict, index in sheet.Third" :key="index">
+							<tr v-for="values, index in conflict" :key="index">
+								<td v-for="value, index in values" :key="index">
+									{{ value }}
+								</td>
+							</tr>
+							<br>
+						</template>
+					</table>
+				<hr>
+			</li>
+		</ul>
+	</div>
 </template>

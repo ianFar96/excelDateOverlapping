@@ -23,6 +23,12 @@ type conflict struct {
 	Second []string
 }
 
+type fileConflict struct {
+	First  string
+	Second []string
+	Third  []conflict
+}
+
 func main() {
 	isDebug := os.Getenv("ENVIRONMENT") == "DEBUG"
 
@@ -45,7 +51,7 @@ func main() {
 	}
 
 	// Commands
-	w.Bind("scan", func(filePath string, dateCol string, startTimeCol string, endTimeCol string) ([]string, error) {
+	w.Bind("scan", func(filePath string, dateCol string, startTimeCol string, endTimeCol string) ([]fileConflict, error) {
 		f, err := excelize.OpenFile(filePath)
 		if err != nil {
 			message := fmt.Sprintf("Error opening the file: %s", err)
@@ -74,6 +80,8 @@ func main() {
 			return nil, errors.New(message)
 		}
 
+		var fileConflicts []fileConflict
+
 		sheetList := f.GetSheetList()
 		for _, sheetName := range sheetList {
 			rows, err := f.GetRows(sheetName)
@@ -84,6 +92,7 @@ func main() {
 			}
 
 			// Delete first element as they are the titles
+			header := rows[0:1][0]
 			rows = rows[1:]
 
 			// Get all the dates with carbon format from the rows
@@ -110,8 +119,8 @@ func main() {
 			for i := 0; i < len(rowRecaps); i++ {
 				for j := i + 1; j < len(rowRecaps); j++ {
 
-					isStartDateBetweenDates := rowRecaps[i].startDate.Between(rowRecaps[j].startDate, rowRecaps[j].endDate)
-					isEndDateBetweenDates := rowRecaps[i].endDate.Between(rowRecaps[j].startDate, rowRecaps[j].endDate)
+					isStartDateBetweenDates := rowRecaps[j].startDate.Between(rowRecaps[i].startDate, rowRecaps[i].endDate)
+					isEndDateBetweenDates := rowRecaps[j].endDate.Between(rowRecaps[i].startDate, rowRecaps[i].endDate)
 					if isStartDateBetweenDates || isEndDateBetweenDates {
 						conflicts = append(conflicts, conflict{
 							rowRecaps[i].row,
@@ -121,10 +130,14 @@ func main() {
 				}
 			}
 
-			fmt.Println(conflicts)
+			fileConflicts = append(fileConflicts, fileConflict{
+				sheetName,
+				header,
+				conflicts,
+			})
 		}
 
-		return sheetList, nil
+		return fileConflicts, nil
 	})
 
 	w.Run()
