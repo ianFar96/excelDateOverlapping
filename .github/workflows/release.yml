@@ -19,4 +19,4 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: $env:GOOS='windows'; $env:GOARCH='amd64'; go build ./backend
+      run: cd backend; $env:GOOS='windows'; $env:GOARCH='amd64'; go build .
