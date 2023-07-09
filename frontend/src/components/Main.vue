@@ -4,6 +4,9 @@ import { Backend } from '../services/backend';
 const backend = new Backend();
 
 const path = ref(localStorage.getItem('path') || '');
+const date = ref(localStorage.getItem('date') || '');
+const startTime = ref(localStorage.getItem('startTime') || '');
+const endTime = ref(localStorage.getItem('endTime') || '');
 
 const sheets = ref<string[]>([]);
 const scan = async () => {
@@ -14,8 +17,16 @@ const scan = async () => {
 		}
 
 		localStorage.setItem('path', path.value);
+		localStorage.setItem('date', date.value);
+		localStorage.setItem('startTime', startTime.value);
+		localStorage.setItem('endTime', endTime.value);
 
-		sheets.value = await backend.scan(path.value, 'A', 'C', 'D');
+		sheets.value = await backend.scan(
+			path.value,
+			date.value,
+			startTime.value,
+			endTime.value
+		);
 	} catch (error) {
 		alert(error);
 	}
@@ -23,8 +34,25 @@ const scan = async () => {
 </script>
 
 <template>
-  {{sheets}}
+	<div>
+		<label>File path (excel)</label>
+		<input type="text" v-model="path">
+	</div>
 
-	<input type="text" v-model="path">
+	<div>
+		<label>Date column (ex. C)</label>
+		<input type="text" v-model="date">
+	</div>
+
+	<div>
+		<label>Start time column (ex. D)</label>
+		<input type="text" v-model="startTime">
+	</div>
+
+	<div>
+		<label>End time column (ex. E)</label>
+		<input type="text" v-model="endTime">
+	</div>
+
 	<button type="button" @click="scan">Scan</button>
 </template>
