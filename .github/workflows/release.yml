@@ -19,7 +19,4 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: cd backend &&
-        GOOS=windows GOARCH=amd64 go build .
-        # mkdir libs\webview2 &&
-        # curl -sSL "https://www.nuget.org/api/v2/package/Microsoft.Web.WebView2" | tar -xf - -C libs\webview2 &&
+      run: GOOS=windows GOARCH=amd64 go build ./backend
