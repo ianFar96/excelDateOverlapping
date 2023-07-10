@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/golang-module/carbon/v2"
 	"github.com/webview/webview"
@@ -41,16 +41,12 @@ func main() {
 	if isDebug {
 		w.Navigate("http://localhost:5173")
 	} else {
-		fileSystem := os.DirFS("../frontend/dist")
-		htmlContent, err := fs.ReadFile(fileSystem, "index.html")
-
-		log.Println(htmlContent)
-
+		path, err := os.Getwd()
 		if err != nil {
-			log.Fatal(err)
-			return
+			log.Println(err)
 		}
-		w.SetHtml(string(htmlContent))
+
+		w.Navigate(fmt.Sprintf("file://%s/frontend/dist/index.html", strings.Replace(path, "/backend", "", 1)))
 	}
 
 	// Commands
