@@ -76,7 +76,7 @@ const scan = async () => {
 								{{ col }}
 							</th>
 						</tr>
-						<template v-for="conflict, index in sheet.Third" :key="index">
+						<template v-for="conflict, _index in sheet.Third" :key="_index">
 							<tr v-for="values, index in conflict" :key="index">
 								<td class="px-4 text-center pt-4" v-for="value, index in values" :key="index">
 									{{ value }}
