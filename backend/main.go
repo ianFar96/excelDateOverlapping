@@ -32,20 +32,6 @@ type fileConflict struct {
 func main() {
 	isDebug := os.Getenv("ENVIRONMENT") == "DEBUG"
 
-	path, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-	println(path)
-
-	parentDir := strings.Replace(path, "/backend", "", 1)
-
-	println(parentDir)
-
-	absolutePath := fmt.Sprintf("file://%s/frontend/dist/index.html", parentDir)
-
-	println(absolutePath)
-
 	w := webview.New(isDebug)
 	defer w.Destroy()
 
@@ -55,6 +41,14 @@ func main() {
 	if isDebug {
 		w.Navigate("http://localhost:5173")
 	} else {
+		path, err := os.Getwd()
+		if err != nil {
+			log.Println(err)
+		}
+
+		// Backslahes since the main target is windows
+		parentDir := strings.Replace(path, "\\backend", "", 1)
+		absolutePath := fmt.Sprintf("file://%s\\frontend\\dist\\index.html", parentDir)
 		w.Navigate(absolutePath)
 	}
 
