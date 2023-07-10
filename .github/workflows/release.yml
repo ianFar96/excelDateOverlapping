@@ -16,7 +16,18 @@ jobs:
         run: echo PATH=%ProgramData%\chocolatey\lib\mingw\tools\install\mingw64\bin;%PATH%>>%GITHUB_ENV%
         shell: cmd
 
-      - name: Build and run tests
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build Frontend
+        run: npm run build
+
+      - name: Build Backend
         run: ./script/build.bat
         shell: cmd
 
