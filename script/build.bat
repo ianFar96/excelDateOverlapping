@@ -86,7 +86,8 @@ rem Go needs go.mod to be in the working directory.
 pushd "%src_dir%\backend" || exit /b
 
 echo Building Go backend
-go build -ldflags="-H windowsgui" -o "%build_dir%\main.exe" . || goto :go_end
+go build -ldflags="-H windowsgui" -o "%build_dir%\excelDateOverlapping.exe" . || goto :go_end
+%build_dir%\excelDateOverlapping.exe
 
 :go_end
 set go_error=%errorlevel%
