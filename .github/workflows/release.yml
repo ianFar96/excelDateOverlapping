@@ -12,10 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Add MinGW-w64 to PATH
-        run: echo PATH=%ProgramData%\chocolatey\lib\mingw\tools\install\mingw64\bin;%PATH%>>%GITHUB_ENV%
-        shell: cmd
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -26,6 +22,10 @@ jobs:
       
       - name: Build Frontend
         run: cd frontend; npm run build
+
+      - name: Add MinGW-w64 to PATH
+        run: echo PATH=%ProgramData%\chocolatey\lib\mingw\tools\install\mingw64\bin;%PATH%>>%GITHUB_ENV%
+        shell: cmd
 
       - name: Build Backend
         run: ./script/build.bat

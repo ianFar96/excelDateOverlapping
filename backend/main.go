@@ -43,6 +43,9 @@ func main() {
 	} else {
 		fileSystem := os.DirFS("../frontend/dist")
 		htmlContent, err := fs.ReadFile(fileSystem, "index.html")
+
+		log.Println(htmlContent)
+
 		if err != nil {
 			log.Fatal(err)
 			return
