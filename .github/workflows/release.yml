@@ -7,16 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  build:
+  build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
-
-    - name: Build
-      run: mkdir libs\webview2; curl -sSL "https://www.nuget.org/api/v2/package/Microsoft.Web.WebView2" | tar -xf - -C libs\webview2; set CGO_CXXFLAGS="-I%cd%\libs\webview2\build\native\include"; cd backend; $env:GOOS='windows'; $env:GOARCH='amd64'; go build -ldflags="-H windowsgui" -o build/basic.exe .
+      - uses: actions/checkout@v1
+      - name: Add MinGW-w64 to PATH
+        run: echo PATH=%ProgramData%\chocolatey\lib\mingw\tools\install\mingw64\bin;%PATH%>>%GITHUB_ENV%
+        shell: cmd
+      - name: Build and run tests
+        run: ./script/build.bat
+        shell: cmd
